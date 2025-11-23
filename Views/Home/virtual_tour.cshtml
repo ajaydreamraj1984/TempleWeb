@@ -1,0 +1,314 @@
+﻿
+@* @{
+    ViewData["Title"] = "virtual_tour";
+}
+
+<h1>virtual_tour</h1>
+ *@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Temple Virtual Tour — 360°</title>
+
+    <!-- Pannellum CSS (CDN) -->
+    <link rel="stylesheet" href="https://unpkg.com/pannellum/build/pannellum.css" />
+
+    <style>
+        :root {
+            --bg: #faf8f3;
+            --card: #fff;
+            --accent: #c47a00;
+            --muted: #6b7280;
+            --max-width: 1200px;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter,system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans',sans-serif;
+            background: var(--bg);
+            color: #111
+        }
+
+        .container {
+            max-width: var(--max-width);
+            margin: 18px auto;
+            padding: 12px
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+            .brand img {
+                height: 56px;
+                width: 56px;
+                object-fit: cover;
+                border-radius: 8px
+            }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+        .btn {
+            background: linear-gradient(90deg,var(--accent),#f59e0b);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 0;
+            cursor: pointer;
+            font-weight: 700
+        }
+
+        .tour-wrap {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 12px;
+            margin-top: 12px
+        }
+        /* Viewer area */
+        #panorama {
+            width: 100%;
+            height: 66vh;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(16,24,40,0.08);
+            overflow: hidden
+        }
+        /* Sidebar with scene list and info */
+        .sidebar {
+            background: var(--card);
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(16,24,40,0.04)
+        }
+
+        .scene-thumb {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer
+        }
+
+            .scene-thumb img {
+                height: 56px;
+                width: 96px;
+                object-fit: cover;
+                border-radius: 6px
+            }
+
+            .scene-thumb.active {
+                outline: 3px solid rgba(196,122,0,0.12)
+            }
+
+        .hotspots {
+            margin-top: 12px
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 14px
+        }
+        @@media (max-width:880px) {
+            .tour-wrap
+
+        {
+            grid-template-columns: 1fr;
+            grid-auto-rows: auto
+        }
+
+        #panorama {
+            height: 58vh
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="brand">
+                
+                <img src="/panoramas/campus.jpg" alt="logo (preview)" onerror="this.style.opacity=.25">
+                <div>
+                    <div style="font-weight:800">Shri Kalyan Mandir</div>
+                    <div class="muted">Virtual Tour • 360° Walkthrough</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn" id="btnResetView">Reset View</button>
+                <button class="btn" id="btnToggleAutorotate">Autorotate: On</button>
+            </div>
+        </header>
+
+        <section class="tour-wrap" aria-label="Virtual tour">
+            <!-- Panorama viewer -->
+            <div id="panorama" role="application" aria-label="360 panorama viewer"></div>
+
+            <!-- Sidebar: scenes and info -->
+            <aside class="sidebar" aria-label="Tour controls">
+                <h3>Scenes</h3>
+
+                <div id="sceneList">
+                    <div class="scene-thumb active" data-scene="campus" tabindex="0" role="button" aria-pressed="true">
+                        <img src="/panoramas/campus.jpg" alt="Temple campus (thumbnail)" onerror="this.style.opacity=.4">
+                        <div>
+                            <div style="font-weight:700">Temple Campus</div>
+                            <div class="muted">Open grounds, entrance</div>
+                        </div>
+                    </div>
+
+                    <div class="scene-thumb" data-scene="inside" tabindex="0" role="button" aria-pressed="false" style="margin-top:8px">
+                        <img src="inside.jpg" alt="Inside darshan (thumbnail)" onerror="this.style.opacity=.4">
+                        <div>
+                            <div style="font-weight:700">Inside Darshan</div>
+                            <div class="muted">Garbhagriha / Sanctum</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hotspots">
+                    <h4>Hotspots</h4>
+                    <p class="muted">Click hotspots inside the viewer to jump between scenes.</p>
+                </div>
+
+                <div style="margin-top:12px">
+                    <h4>Info</h4>
+                    <p class="muted">Use mouse / drag / two-finger touch to look around. Scroll to zoom.</p>
+                </div>
+            </aside>
+        </section>
+    </div>
+
+    <!-- Pannellum JS (CDN) -->
+    <script src="https://unpkg.com/pannellum/build/pannellum.js"></script>
+
+    <script>
+        // Replace with your own equirectangular panorama images:
+        // campus.jpg (e.g., 8000x4000 or 4000x2000) and inside.jpg
+        // If you want to use remote URLs, provide absolute paths like "https://example.com/panoramas/campus.jpg"
+
+        // Scenes configuration
+        const scenes = {
+          "campus": {
+            "title": "Temple Campus View",
+            "hfov": 110,
+            "pitch": 0,
+            "yaw": 0,
+            // local relative path by default
+            "panorama": "/panoramas/campus.jpg",
+            "hotSpots": [
+              {
+                "pitch": 2,
+                "yaw": 110,
+                "type": "scene",
+                "text": "Enter - Garbhagriha",
+                "sceneId": "inside"
+              }
+            ]
+          },
+          "inside": {
+            "title": "Inside Darshan",
+            "hfov": 100,
+            "pitch": 0,
+            "yaw": 180,
+            "panorama": "inside.jpg",
+            "hotSpots": [
+              {
+                "pitch": -4,
+                "yaw": -40,
+                "type": "scene",
+                "text": "Back to Campus",
+                "sceneId": "campus"
+              }
+            ]
+          }
+        };
+
+        // Initialize viewer
+        const viewer = pannellum.viewer('panorama', {
+          default: {
+            firstScene: 'campus',
+            sceneFadeDuration: 1000,
+            author: "Shri Kalyan Mandir",
+            autoLoad: true,
+            autoRotate: -2, // degrees per second (negative rotates clockwise)
+            showZoomCtrl: true,
+            keyboard: true,
+          },
+          scenes: scenes
+        });
+
+        // Add click handlers for the sidebar scene thumbnails
+        document.querySelectorAll('.scene-thumb').forEach(function(el){
+          el.addEventListener('click', function(){
+            const id = el.getAttribute('data-scene');
+            viewer.loadScene(id);
+            document.querySelectorAll('.scene-thumb').forEach(s=>s.classList.remove('active'));
+            el.classList.add('active');
+            // update aria-pressed
+            document.querySelectorAll('.scene-thumb').forEach(s=>s.setAttribute('aria-pressed','false'));
+            el.setAttribute('aria-pressed','true');
+          });
+          el.addEventListener('keydown', function(e){
+            if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); el.click(); }
+          });
+        });
+
+        // Reset view / buttons
+        document.getElementById('btnResetView').addEventListener('click', function(){
+          viewer.setYaw(0);
+          viewer.setPitch(0);
+          viewer.setHfov(110);
+        });
+
+        // Toggle autorotate
+        let autorotateOn = true;
+        const btnAuto = document.getElementById('btnToggleAutorotate');
+        btnAuto.addEventListener('click', function(){
+          autorotateOn = !autorotateOn;
+          if(autorotateOn){
+            viewer.startAutoRotate(-2);
+            btnAuto.textContent = 'Autorotate: On';
+          } else {
+            viewer.stopAutoRotate();
+            btnAuto.textContent = 'Autorotate: Off';
+          }
+        });
+
+        // Keep sidebar highlight in sync when scene changed by hotspots
+        viewer.on('scenechange', function(id){
+          document.querySelectorAll('.scene-thumb').forEach(s=>s.classList.remove('active'));
+          const el = document.querySelector('.scene-thumb[data-scene=\"'+id+'\"]');
+          if(el){ el.classList.add('active'); el.setAttribute('aria-pressed','true'); }
+        });
+
+        // Helpful: if image not present show message in console
+        viewer.on('load', function(){
+          // If the image failed to load, pannellum fires no explicit error in this callback,
+          // so we check texture size as a crude indicator.
+          // (This is optional — remove if not needed.)
+          try {
+            const scene = viewer.getConfig().default.firstScene;
+          } catch(e){}
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,653 @@
+﻿@* <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TempleWeb</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/TempleWeb.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TempleWeb</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - TempleWeb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+ *@
+
+
+
+
+<!doctype html>
+<html lang="hi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Mandir - Home</title>
+    <meta name="description" content="Modern responsive temple website UI — Home, Live Darshan, Aarti timings, announcements." />
+
+    <!-- Minimal, performance-friendly CSS (no heavy frameworks) -->
+    <style>
+        :root {
+            --bg: #fbfbfb;
+            --card: #ffffff;
+            --muted: #6b7280;
+            --accent: #c47a00;
+            --accent-2: #f59e0b;
+            --glass: rgba(255,255,255,0.6);
+            --max-width: 1200px;
+            --radius: 12px;
+            --shadow: 0 6px 18px rgba(16,24,40,0.06);
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, 'Noto Sans', sans-serif;
+            margin: 0;
+            background: linear-gradient(180deg,#fff 0%, #fbfbfb 100%);
+            color: #111
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none
+        }
+
+        .container {
+            max-width: var(--max-width);
+            margin: 24px auto;
+            padding: 0 16px
+        }
+
+        /* Top header */
+        header.topbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(6px);
+            background: rgba(255,255,255,0.85);
+            border-bottom: 1px solid #eee
+        }
+
+        .topbar .wrap {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 10px 16px
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+            .logo img {
+                height: 48px;
+                width: 48px;
+                object-fit: cover;
+                border-radius: 10px
+            }
+
+        .brand {
+            font-weight: 700;
+            letter-spacing: 0.2px
+        }
+
+            .brand small {
+                display: block;
+                font-weight: 600;
+                color: var(--muted);
+                font-size: 12px
+            }
+
+        /* Nav */
+        nav {
+            margin-left: 16px;
+            flex: 1
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 8px;
+            align-items: center
+        }
+
+        .menu {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            list-style: none;
+            margin: 0;
+            padding: 0
+        }
+
+            .menu > li {
+                position: relative
+            }
+
+            .menu a {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 12px;
+                border-radius: 8px;
+                font-weight: 600;
+                color: #222
+            }
+
+                .menu a .arrow {
+                    display: inline-block;
+                    transition: transform .25s cubic-bezier(.2,.9,.3,1)
+                }
+
+            .menu li:hover > a {
+                background: var(--glass)
+            }
+        /* Submenu (smooth arrow animation) */
+        .submenu {
+            position: absolute;
+            top: 48px;
+            left: 0;
+            min-width: 220px;
+            background: var(--card);
+            box-shadow: var(--shadow);
+            border-radius: 12px;
+            padding: 8px;
+            display: none
+        }
+
+            .submenu a {
+                display: block;
+                padding: 10px;
+                border-radius: 8px;
+                font-weight: 500
+            }
+
+        .menu li.open > .submenu {
+            display: block
+        }
+
+        .menu li.open > a .arrow {
+            transform: rotate(90deg)
+        }
+
+        /* Right area: profile + search (kept simple) */
+        .right-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center
+        }
+
+        .profile {
+            position: relative
+        }
+
+        .profile-btn {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 10px;
+            cursor: pointer
+        }
+
+            .profile-btn img {
+                height: 36px;
+                width: 36px;
+                border-radius: 50%;
+                object-fit: cover
+            }
+
+        .profile-menu {
+            position: absolute;
+            right: 0;
+            top: 56px;
+            width: 220px;
+            background: var(--card);
+            box-shadow: var(--shadow);
+            border-radius: 10px;
+            display: none;
+            padding: 8px
+        }
+
+        .profile.open .profile-menu {
+            display: block
+        }
+
+        .profile-menu a {
+            display: block;
+            padding: 10px;
+            border-radius: 8px
+        }
+
+        /* Mobile hamburger */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 8px
+        }
+
+            .hamburger .bar {
+                width: 22px;
+                height: 2px;
+                background: #111;
+                margin: 4px 0
+            }
+
+        /* Hero / Banner slider */
+        .hero {
+            margin-top: 18px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow)
+        }
+
+        .hero-slide {
+            height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            position: relative
+        }
+
+            .hero-slide img {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover
+            }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 28px;
+            text-align: left;
+            max-width: 720px
+        }
+
+        .hero h1 {
+            font-size: 32px;
+            margin: 0 0 8px
+        }
+
+        .hero p {
+            margin: 0;
+            color: rgba(255,255,255,0.95)
+        }
+
+        .hero .badge {
+            display: inline-block;
+            background: rgba(0,0,0,0.28);
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-weight: 600
+        }
+
+        /* Quick info cards */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 12px;
+            margin-top: 14px
+        }
+
+        .card {
+            background: var(--card);
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: var(--shadow)
+        }
+
+            .card h4 {
+                margin: 6px 0 2px
+            }
+
+        .muted {
+            color: var(--muted);
+            font-size: 14px
+        }
+
+        /* Announcements and timings */
+        .two-col {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 12px;
+            margin-top: 16px
+        }
+
+        .list {
+            max-height: 220px;
+            overflow: auto
+        }
+
+        /* Responsive adjustments */
+        @@media (max-width:900px) {
+            .grid {
+                grid-template-columns: repeat(2,1fr)
+            }
+
+            .two-col {
+                grid-template-columns: 1fr
+            }
+
+            .hero-slide {
+                height: 260px
+            }
+        }
+
+        @@media (max-width:720px) {
+            .main-nav {
+                display: none
+            }
+
+            .hamburger {
+                display: block
+            }
+
+            .logo .brand {
+                display: none
+            }
+
+            .container {
+                padding: 0 12px
+            }
+
+            header .wrap {
+                padding: 8px 12px
+            }
+        }
+
+        /* Mobile drawer */
+        .drawer {
+            position: fixed;
+            inset: 0;
+            transform: translateX(-110%);
+            transition: transform .33s cubic-bezier(.2,.9,.3,1);
+            background: linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.6));
+            display: none
+        }
+
+            .drawer.open {
+                display: block;
+                transform: translateX(0)
+            }
+
+            .drawer .panel {
+                width: 280px;
+                height: 100%;
+                background: var(--card);
+                padding: 16px
+            }
+
+        /* Small niceties */
+        .time {
+            font-weight: 700;
+            font-size: 18px
+        }
+
+        .announcement p {
+            margin: 0
+        }
+
+        .sr-only {
+            position: absolute;
+            left: -9999px
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Topbar -->
+    <header class="topbar">
+        <div class="container wrap">
+            <div class="logo" aria-hidden="false">
+                <img src="https://images.unsplash.com/photo-1528238246910-43f3d8f3b0c8?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="Mandir Logo">
+                <div class="brand">Shri Kalyan Mandir <small>Darshan • Seva • Shraddha</small></div>
+            </div>
+
+            <nav aria-label="Primary" role="navigation">
+                <div class="main-nav">
+                    <ul class="menu" role="menubar">
+                        <li class="nav-item"><a href="#home">Home</a></li>
+                        <li class="nav-item has-sub" data-key="pooja">
+                            <a href="#pooja">Poojas <span class="arrow">›</span></a>
+                            <div class="submenu" role="menu">
+                                <a href="#">Daily Aarti</a>
+                                <a href="#">Special Pooja</a>
+                                <a href="#">Booking</a>
+                            </div>
+                        </li>
+                        <li class="nav-item has-sub" data-key="live">
+                            <a href="#darshan">Live Darshan <span class="arrow">›</span></a>
+                            <div class="submenu">
+                                <a href="#">Morning Aarti</a>
+                                <a href="#">Evening Aarti</a>
+                                <a href="#">Archive</a>
+                            </div>
+                        </li>
+                        <li class="nav-item"><a href="#events">Events</a></li>
+                        <li class="nav-item"><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+            </nav>
+
+            <div class="right-actions">
+                <div class="hamburger" id="hamburger" aria-hidden="true" aria-label="Open menu" tabindex="0">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
+
+                <div class="profile" id="profile">
+                    <div class="profile-btn" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="User">
+                        <div class="sr-only">User menu</div>
+                        <div style="margin-left:6px;">
+                            <div style="font-weight:700; font-size:13px">Guest</div>
+                            <div style="font-size:12px; color:var(--muted)">Member</div>
+                        </div>
+                    </div>
+
+                    <div class="profile-menu" role="menu" aria-hidden="true">
+                        <a href="#profile">My Profile</a>
+                        <a href="#bookings">My Bookings</a>
+                        <a href="#donate">Donate</a>
+                        <a href="#logout">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile drawer -->
+    <div class="drawer" id="drawer" aria-hidden="true">
+        <div class="panel">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px">
+                <img src="https://images.unsplash.com/photo-1528238246910-43f3d8f3b0c8?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="logo" style="height:44px; width:44px; border-radius:8px">
+                <div>
+                    <div style="font-weight:800">Shri Kalyan Mandir</div>
+                    <div style="font-size:13px; color:var(--muted)">Darshan • Seva</div>
+                </div>
+            </div>
+
+            <nav>
+                <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#pooja">Poojas</a></li>
+                    <li><a href="#darshan">Live Darshan</a></li>
+                    <li><a href="#events">Events</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <main class="container">
+        @await Html.PartialAsync("_Loader")
+        @RenderBody()
+
+        @*  <!-- Hero Banner Slider (simple, performant) -->
+        <section class="hero" id="home">
+            <div class="hero-slide" data-bg="https://images.unsplash.com/photo-1504208434309-cb69f4fe52b0?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder">
+                <img alt="darshan" loading="lazy">
+                <div class="hero-content">
+                    <div class="badge">Aaj ka Darshan • 17 Nov 2025</div>
+                    <h1>Shri Kalyan Mandir — Aarti: 6:00 AM / 8:00 PM</h1>
+                    <p>Har din bhakti aur shanti ke saath. Online booking aur live darshan uplabdh.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick info cards -->
+        <div class="grid" aria-hidden="false">
+            <div class="card">
+                <h4>Live Darshan</h4>
+                <div class="muted">Morning & Evening Aarti</div>
+                <div style="margin-top:8px"><button onclick="alert('Live Darshan play - connect to YouTube')" style="padding:8px 10px; border-radius:8px; border:0; background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#fff; font-weight:700">Watch Now</button></div>
+            </div>
+
+            <div class="card">
+                <h4>Next Aarti</h4>
+                <div class="time" id="nextAarti">06:00 AM</div>
+                <div class="muted">Aarti starts in <span id="countdown">--:--</span></div>
+            </div>
+
+            <div class="card">
+                <h4>Important Announcement</h4>
+                <div class="muted">Temple will remain open during Navratri timings</div>
+            </div>
+        </div>
+
+        <!-- Announcements & Timings -->
+        <div class="two-col">
+            <div class="card announcement">
+                <h3>Latest Announcements</h3>
+                <div class="list" id="annList">
+                    <p>• Prasad distribution on 25 Nov after evening aarti.</p>
+                    <p>• Temple cleaning volunteer drive on 20 Nov.</p>
+                    <p>• New prasadam booking service launched.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Aarti Timings</h3>
+                <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px">
+                    <div><strong>Morning:</strong> 06:00 AM</div>
+                    <div><strong>Evening:</strong> 08:00 PM</div>
+                    <div style="margin-top:8px"><a href="#pooja">View full schedule</a></div>
+                </div>
+            </div>
+        </div>
+ *@
+    </main>
+
+    <!-- Lightweight scripts at end for performance -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        (function($){
+          // DOM ready
+          $(function(){
+            // Simple background lazy loader for hero
+            $('.hero-slide').each(function(){
+              var $s = $(this);
+              var src = $s.attr('data-bg');
+              var img = $s.find('img');
+              img.attr('src', src);
+              // fade in when loaded
+              img.on('load', function(){ $s.css({'background':'none'}); $(this).css({opacity:1}); });
+            });
+
+            // Menu open/close with smooth arrow animation
+            $('.menu .has-sub > a').on('click', function(e){
+              e.preventDefault();
+              var li = $(this).closest('li');
+              $('.menu li').not(li).removeClass('open');
+              li.toggleClass('open');
+            });
+
+            // Profile dropdown
+            $('#profile .profile-btn').on('click keypress', function(e){
+              if(e.type==='click' || e.key==='Enter'){
+                $('#profile').toggleClass('open');
+                var expanded = $('#profile').hasClass('open');
+                $('#profile .profile-btn').attr('aria-expanded', expanded);
+              }
+            });
+
+            // Close on outside click
+            $(document).on('click touchstart', function(e){
+              if(!$(e.target).closest('.profile').length){ $('#profile').removeClass('open'); }
+              if(!$(e.target).closest('.menu').length){ $('.menu li').removeClass('open'); }
+            });
+
+            // Mobile drawer toggle
+            $('#hamburger').on('click', function(){ $('#drawer').toggleClass('open'); $('#drawer').attr('aria-hidden', !$('#drawer').hasClass('open')); });
+
+            // Accessibility: allow Esc to close
+            $(document).on('keydown', function(e){ if(e.key==='Escape'){ $('#profile').removeClass('open'); $('#drawer').removeClass('open'); $('.menu li').removeClass('open'); } });
+
+            // Tiny countdown demo to next aarti (performance-friendly)
+            function startCountdown(targetDate){
+              function tick(){
+                var now = new Date();
+                var diff = targetDate - now;
+                if(diff<=0){ $('#countdown').text('00:00'); clearInterval(timer); return; }
+                var mins = Math.floor((diff/1000/60)%60); var hrs = Math.floor((diff/1000/60/60)%24);
+                $('#countdown').text(('0'+hrs).slice(-2)+':'+('0'+mins).slice(-2));
+              }
+              tick(); var timer = setInterval(tick, 30*1000);
+            }
+            // compute next aarti (today 6AM or tomorrow 6AM for demo)
+            var now = new Date(); var next = new Date(); next.setHours(6,0,0,0); if(now.getHours()>=6) next.setDate(next.getDate()+1);
+            startCountdown(next);
+
+            // Lightweight performance tips applied: defer heavy images, minimal DOM updates, no external widget bloat.
+          });
+
+        })(jQuery);
+    </script>
+</body>
+</html>
